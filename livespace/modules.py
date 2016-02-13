@@ -13,3 +13,11 @@ class Default(object):
         """
         data = dict(**data)
         return self.client(self.MODULE_NAME, 'ping', data)
+
+
+class Contact(object):
+
+    MODULE_NAME = 'Contact'
+
+    def __init__(self, client):
+        self.client = client

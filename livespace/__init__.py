@@ -130,4 +130,12 @@ class Client(object):
 class Api(object):
 
     def __init__(self, client):
+        self.client = client
         self.default = modules.Default(client)
+        self.contact = modules.Contact(client)
+
+    @classmethod
+    def construct(cls, api_url, api_key, api_secret):
+        client = Client(api_url, api_key, api_secret)
+        return cls(client=client)
+
