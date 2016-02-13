@@ -3,6 +3,8 @@ import hashlib
 import json
 import requests
 
+from . import modules
+
 
 class DeserializeError(Exception):
 
@@ -94,7 +96,7 @@ class Client(object):
         response.raise_for_status()
         data = response.data
         return {
-            '_api_auth': self.options['auth_method'],
+            '_api_auth': 'key',
             '_api_key': self.api_key,
             '_api_sha': hashlib.sha1(self.api_key + data['token'] + self.api_secret).hexdigest(),
             '_api_session': data['session_id']
@@ -124,3 +126,8 @@ class Client(object):
             'output_format': 'json'
         }
 
+
+class Api(object):
+
+    def __init__(self, client):
+        self.default = modules.Default(client)
