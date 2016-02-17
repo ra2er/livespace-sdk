@@ -1,24 +1,10 @@
+#-*- coding:: utf-8 -*-
 from requests.models import complexjson
 import hashlib
 import json
 import requests
 
-from . import modules
-
-
-class DeserializeError(Exception):
-
-    pass
-
-
-class ApiError(Exception):
-
-    def __init__(self, status_code, reason):
-        self.status_code = status_code
-        self.reason = reason
-
-    def __str__(self):
-        return '%d: %s' % (self.status_code, self.reason)
+from . import modules, exceptions
 
 
 class ApiResponse(object):
@@ -48,7 +34,7 @@ class ApiResponse(object):
         try:
             self.response = response.json()
         except complexjson.JSONDecodeError:
-            raise DeserializeError('Invalid response from livespace API')
+            raise exceptions.DeserializeError('Invalid response from livespace API')
 
     @property
     def data(self):
@@ -69,10 +55,12 @@ class ApiResponse(object):
     def raise_for_status(self):
         if self.result != 200:
             if self.result in self.error_messages.keys():
-                raise ApiError(self.result, self.error or self.error_messages
-                                                              .get(self.result))
+                if self.result == 550:
+                    raise exceptions.ApiMethodError(self.result, self.error)
+                raise exceptions.ApiError(self.result, self.error_messages
+                                                           .get(self.result))
             else:
-                raise ApiError(self.result, self.error)
+                raise exceptions.ApiError(self.result, self.error)
 
 
 class Client(object):

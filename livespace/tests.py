@@ -3,7 +3,8 @@
 import mock
 import unittest
 
-from livespace import ApiError, Client
+from livespace import Client
+from livespace.exceptions import ApiError
 
 
 class ClientTestCase(unittest.TestCase):
