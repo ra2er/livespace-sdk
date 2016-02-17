@@ -19,7 +19,7 @@ class ApiMethodError(ApiError):
     """ Status code: 550 """
 
     def __init__(self, status_code, response_error, **kwargs):
-        super(ApiMethodError, self).__init__(status_code, response_error, **kwargs)
+        super(ApiMethodError, self).__init__(status_code, **kwargs)
         self.response_error = response_error
 
     def __str__(self):
