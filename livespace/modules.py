@@ -79,3 +79,20 @@ class Contact(object):
         response = self.client(self.MODULE_NAME, 'getAllSimple', data)
         return response.data[data['type']]
 
+    def add(self, **params):
+        """
+        Usage::
+            add(firstname='David', lastname='Novak')
+        """
+        return self.client(self.MODULE_NAME, 'addContact', {'contact': dict(**params)})
+
+    def add_multiple(self, *contacts):
+        """
+        Add multiple contacts.
+        Like `add` but takes list of contacts. Each contact is a dict with contact fields.
+        Usage::
+            add_multiple({'firstname': 'David', 'lastname': 'Novak'}, {'firstname': 'John', 'lastname': 'Doe'})
+        """
+        contacts = {index: contact for index, contact in enumerate(contacts)}
+        return self.client(self.MODULE_NAME, 'addContacts', {'contacts': dict(**contacts)})
+
