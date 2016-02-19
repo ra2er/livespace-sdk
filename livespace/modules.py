@@ -103,9 +103,14 @@ class Contact(object):
         return self.client(self.MODULE_NAME, 'deleteContacts',
                            {'contact': {'id': id}})
 
-    def edit(self, **params):
-        data = {'type': 'contact'}
-        data.update(**params)
-        return self.client(self.MODULE_NAME, 'editContact', data)
+    def edit(self, id, **params):
+        """
+        Edit contact of given id and set new params.
+        Usage::
+            edit('id-of-the-contact', lastname='Novak')
+        """
+        data = {'id': id}
+        data.updata(**params)
+        return self.client(self.MODULE_NAME, 'editContact', {'contact': data})
 
 
