@@ -56,8 +56,7 @@ class Contact(object):
         """
         data = {'type': 'contact'}
         data.update(**params)
-        response = self.client(self.MODULE_NAME, 'getAll', data)
-        return response.data[data['type']]
+        return self.client(self.MODULE_NAME, 'getAll', data)
 
     def get_all_simple(self, **params):
         """
@@ -76,15 +75,15 @@ class Contact(object):
             data.updata(limit=limit)
         if offset:
             data.update(offset=offset)
-        response = self.client(self.MODULE_NAME, 'getAllSimple', data)
-        return response.data[data['type']]
+        return self.client(self.MODULE_NAME, 'getAllSimple', data)
 
     def add(self, **params):
         """
         Usage::
             add(firstname='David', lastname='Novak')
         """
-        return self.client(self.MODULE_NAME, 'addContact', {'contact': dict(**params)})
+        return self.client(self.MODULE_NAME, 'addContact',
+                           {'contact': dict(**params)})
 
     def add_multiple(self, *contacts):
         """
@@ -94,5 +93,19 @@ class Contact(object):
             add_multiple({'firstname': 'David', 'lastname': 'Novak'}, {'firstname': 'John', 'lastname': 'Doe'})
         """
         contacts = {index: contact for index, contact in enumerate(contacts)}
-        return self.client(self.MODULE_NAME, 'addContacts', {'contacts': dict(**contacts)})
+        return self.client(self.MODULE_NAME, 'addContacts',
+                           {'contacts': dict(**contacts)})
+
+    def delete(self, id):
+        """
+        :param id: String. e.g.: 'd075b5d4-9e60-8e5b-f436-4bf9c20dfb80' - contact ID.
+        """
+        return self.client(self.MODULE_NAME, 'deleteContacts',
+                           {'contact': {'id': id}})
+
+    def edit(self, **params):
+        data = {'type': 'contact'}
+        data.update(**params)
+        return self.client(self.MODULE_NAME, 'editContact', data)
+
 
