@@ -25,12 +25,15 @@ class Contact(object):
 
     def get_all(self, **params):
         """
-        Get all contacts by given criteria.
-        Takes only one required param which is set by default:
-        :param type: String. e.g.: 'contact'
+        Get all contacts by given criteria. Persons and companies.
+        Persons - type: 'contact'
+        Companies - type: 'company'
+
+        Takes only one required param:
+        :param type: String. e.g.: 'contact' or 'company'
 
         All other params are optional.
-        This method must be called with at least ONE param.
+        This method must be called with at least one param.
 
         :param firstnames: String of comma separated values, e.g.: 'John,Brian'
         :param lastnames: String of comma separated values.
@@ -54,41 +57,42 @@ class Contact(object):
         :param limit: String representation of INT. Limit of results. Default is all of search results.
         :param offset: String representation of INT. Default is '0'.
         """
-        data = {'type': 'contact'}
-        data.update(**params)
-        return self.client(self.MODULE_NAME, 'getAll', data)
+        return self.client(self.MODULE_NAME, 'getAll', dict(**params))
 
     def get_all_simple(self, **params):
         """
         Same as get all but with reduced number of params.
-        Takes only one required param which is set by default:
-        :param type: String. e.g.: 'contact'
+        Takes only one required param:
+        :param type: String. e.g.: 'contact' or 'company'
 
         Optional params:
         :param limit: String representation of INT. Limit of results. Default is all of search results.
         :param offset: String representation of INT. Default is '0'.
         """
-        data = {'type': 'contact'}
-        limit = params.get('limit')
-        offset = params.get('offset')
-        if limit:
-            data.updata(limit=limit)
-        if offset:
-            data.update(offset=offset)
-        return self.client(self.MODULE_NAME, 'getAllSimple', data)
+        return self.client(self.MODULE_NAME, 'getAllSimple', dict(**params))
 
-    def add(self, **params):
+    def add_contact(self, **params):
         """
+        Add person to contacts.
         Usage::
-            add(firstname='David', lastname='Novak')
+            add_contact(firstname='David', lastname='Novak')
         """
         return self.client(self.MODULE_NAME, 'addContact',
                            {'contact': dict(**params)})
 
-    def add_multiple(self, *contacts):
+    def add_company(self, **params):
+        """
+        Add company to contacts.
+        Usage::
+            add_company()
+
+        """
+        return self.client(self.MODULE_NAME, 'addCompany',
+                           {'company': dict(**params)})
+
+    def add_contact_multiple(self, *contacts):
         """
         Add multiple contacts.
-        Like `add` but takes list of contacts. Each contact is a dict with contact fields.
         Usage::
             add_multiple({'firstname': 'David', 'lastname': 'Novak'}, {'firstname': 'John', 'lastname': 'Doe'})
         """
@@ -96,21 +100,51 @@ class Contact(object):
         return self.client(self.MODULE_NAME, 'addContacts',
                            {'contacts': dict(**contacts)})
 
-    def delete(self, id):
+    def add_company_multiple(self, *companies):
         """
-        :param id: String. e.g.: 'd075b5d4-9e60-8e5b-f436-4bf9c20dfb80' - contact ID.
+        Add multiple companies.
+        Usage::
+            add_company_multiple({'name': 'Umbrella'}, {'name': 'Weyland-Yutani'})
         """
-        return self.client(self.MODULE_NAME, 'deleteContacts',
-                           {'contact': {'id': id}})
+        companies = {index: company for index, company in enumerate(companies)}
+        return self.client(self.MODULE_NAME, 'addCompanies',
+                           {'companies': dict(**companies)})
 
-    def edit(self, id, **params):
+    def edit_contact(self, id, **params):
         """
         Edit contact of given id and set new params.
         Usage::
-            edit('id-of-the-contact', lastname='Novak')
+            edit_contact('id-of-the-contact', lastname='Novak')
         """
         data = {'id': id}
         data.updata(**params)
         return self.client(self.MODULE_NAME, 'editContact', {'contact': data})
 
+    def edit_company(self, id, **params):
+        """
+        Edit company of given id and set new params.
+        Usage::
+            edit_company('id-of-the-company', name='Umbrella')
+        """
+        data = {'id': id}
+        data.updata(**params)
+        return self.client(self.MODULE_NAME, 'editCompany', {'company': data})
+
+    def delete_contact(self, id):
+        """
+        Delete contact of given id.
+        Usage::
+            delete_contact('id-of-contact')
+        """
+        return self.client(self.MODULE_NAME, 'deleteContact',
+                           {'contact': {'id': id}})
+
+    def delete_company(self, id):
+        """
+        Delete company of given id.
+        Usage::
+            delete_company('id-of-contact')
+        """
+        return self.client(self.MODULE_NAME, 'deleteCompany',
+                           {'company': {'id': id}})
 
