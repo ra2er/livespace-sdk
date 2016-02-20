@@ -121,6 +121,10 @@ class Api(object):
         self.client = client
         self.default = modules.Default(client)
         self.contact = modules.Contact(client)
+        self.deal = modules.Deal(client)
+        self.todo = modules.Todo(client)
+        self.search = modules.Search(client)
+
 
     @classmethod
     def construct(cls, api_url, api_key, api_secret):

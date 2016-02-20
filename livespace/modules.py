@@ -23,9 +23,9 @@ class Contact(object):
     def __init__(self, client):
         self.client = client
 
-    def get_all(self, **params):
+    def filter(self, **params):
         """
-        Get all contacts by given criteria. Persons and companies.
+        Filter contacts by given criteria. Persons and companies.
         Persons - type: 'contact'
         Companies - type: 'company'
 
@@ -46,8 +46,8 @@ class Contact(object):
         :param modified: String or tuple of strings. Datetime ISO format.
         :param last_active: String or tuple of strings. Datetime ISO format.
         Usage::
-            get_all(created='2015-01-01')
-            get_all(created={'from': '2015-01-01', 'to': '2015-01-20'})
+            filter(created='2015-01-01')
+            filter(created={'from': '2015-01-01', 'to': '2015-01-20'})
 
         :param owner_login: String of comma separated values.
         :param condition: e.g: condition='like'; condition='equal'.
@@ -59,9 +59,8 @@ class Contact(object):
         """
         return self.client(self.MODULE_NAME, 'getAll', dict(**params))
 
-    def get_all_simple(self, **params):
+    def get_all(self, **params):
         """
-        Same as get all but with reduced number of params.
         Takes only one required param:
         :param type: String. e.g.: 'contact' or 'company'
 
@@ -84,7 +83,7 @@ class Contact(object):
         """
         Add company to contacts.
         Usage::
-            add_company()
+            add_company(name='Umbrella')
 
         """
         return self.client(self.MODULE_NAME, 'addCompany',
@@ -116,9 +115,8 @@ class Contact(object):
         Usage::
             edit_contact('id-of-the-contact', lastname='Novak')
         """
-        data = {'id': id}
-        data.updata(**params)
-        return self.client(self.MODULE_NAME, 'editContact', {'contact': data})
+        return self.client(self.MODULE_NAME, 'editContact',
+                           {'contact': dict(id=id, **params)})
 
     def edit_company(self, id, **params):
         """
@@ -126,9 +124,26 @@ class Contact(object):
         Usage::
             edit_company('id-of-the-company', name='Umbrella')
         """
-        data = {'id': id}
-        data.updata(**params)
-        return self.client(self.MODULE_NAME, 'editCompany', {'company': data})
+        return self.client(self.MODULE_NAME, 'editCompany',
+                           {'company': dict(id=id, **params)})
+
+    def add_contact_note(self, id, **params):
+        """
+        Add note to contact.
+        Usage::
+            add_contact_note('id-of-contact', note='Some note', tags='tag1,tag2,...,tagN')
+        """
+        return self.client(self.MODULE_NAME, 'addContactNote',
+                           {'contact': dict(id=id, **params)})
+
+    def add_company_note(self, id, **params):
+        """
+        Add note to company.
+        Usage::
+            add_contact_note('id-of-contact', note='Some note', tags='tag1,tag2,...,tagN')
+        """
+        return self.client(self.MODULE_NAME, 'addCompanyNote',
+                           {'company': dict(id=id, **params)})
 
     def delete_contact(self, id):
         """
@@ -143,8 +158,52 @@ class Contact(object):
         """
         Delete company of given id.
         Usage::
-            delete_company('id-of-contact')
+            delete_company('id-of-company')
         """
         return self.client(self.MODULE_NAME, 'deleteCompany',
                            {'company': {'id': id}})
 
+    def get_wall(self, what, id):
+        """
+        Get wall entries.
+        Usage::
+            get_wall('contact', 'id-of-contact') or
+            get_wall('company', 'id-of-company')
+        """
+        assert what in ['contact', 'company']
+        return self.client(self.MODULE_NAME, 'getWall', {'type': what,
+                                                         'id': id})
+
+
+class Deal(object):
+
+    MODULE_NAME = 'Deal'
+
+    def __init__(self, client):
+        self.client = client
+
+
+class Todo(object):
+
+    MODULE_NAME = 'Todo'
+
+    def __init__(self, client):
+        self.client = client
+
+
+class Search(object):
+
+    MODULE_NAME = 'Search'
+
+    def __init__(self, client):
+        self.client = client
+
+    def get_result(self, what, **params):
+        """
+        Get result of search by given query, other params are also acceptable.
+        Usage::
+            get_result('contact', q='David') # where q is search queyy
+        """
+        assert what in ['contact', 'company', 'deal']
+        return self.client(self.MODULE_NAME, 'getResult',
+                           dict(object_type=what, **params))
