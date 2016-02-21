@@ -123,6 +123,7 @@ class Api(object):
         self.contact = modules.Contact(client)
         self.deal = modules.Deal(client)
         self.todo = modules.Todo(client)
+        self.wall = modules.Wall(client)
         self.search = modules.Search(client)
 
 
