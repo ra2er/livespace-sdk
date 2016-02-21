@@ -13,4 +13,5 @@ setup(
     license='MIT',
     packages=find_packages(),
     version='0.0.1',
+    description='python implementation of livespace SDK',
     install_requires=REQUIREMENTS)
