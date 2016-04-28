@@ -95,7 +95,7 @@ class Client(object):
         token = self.get_access_token()
         params.update(**token)
         payload = json.dumps(params)
-        r = requests.post(url, verify=False, data=payload)
+        r = requests.post(url, {'data': payload}, verify=False)
         response = ApiResponse(r)
         response.raise_for_status()
         return response
