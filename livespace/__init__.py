@@ -79,7 +79,7 @@ class Client(object):
             '_api_auth': 'key',
             '_api_key': self.api_key
         }
-        r = requests.post(url, data=data)
+        r = requests.post(url, verify=False, data=data) # resolve this ASAP
         response = ApiResponse(r)
         response.raise_for_status()
         data = response.data
@@ -95,7 +95,7 @@ class Client(object):
         token = self.get_access_token()
         params.update(**token)
         payload = json.dumps(params)
-        r = requests.post(url, {'data': payload})
+        r = requests.post(url, verify=False, data=payload)
         response = ApiResponse(r)
         response.raise_for_status()
         return response
